@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Shaadi — a winter wedding planner & venue finder concept for Pakistan. Sample data only.">
+  <title>Shaadi — Winter Wedding Planner & Venue Finder</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Persistent honesty banner: visible on every screen -->
+  <div class="sample-banner" id="sampleBanner">
+    All venues, vendors, and prices are sample data for design demonstration.
+  </div>
+
+  <div class="app">
+
+    <!-- ============ HEADER ============ -->
+    <header class="app-header">
+      <div class="wordmark-row">
+        <span class="wordmark-ur" lang="ur">شادی</span>
+        <h1>Shaadi</h1>
+      </div>
+      <p class="tagline">Winter Wedding Planner &amp; Venue Finder — a UX concept</p>
+      <div class="season-banner" id="seasonBanner">
+        <strong>Winter shaadi season is here</strong>
+        November to February is peak wedding season in Pakistan — marquee prices
+        rise and dates fill fast. Plan all three events without the debt trap.
+      </div>
+    </header>
+
+    <main>
+
+      <!-- ============ TAB 1: VENUES ============ -->
+      <section class="tab-panel active" id="panel-venues" aria-labelledby="title-venues">
+        <h2 class="panel-title" id="title-venues">Find a venue</h2>
+        <p class="panel-sub">Compare per-head catering rates across five cities. Winter weekend surcharges apply in December.</p>
+
+        <div class="filters">
+          <div class="field">
+            <label for="cityFilter">City</label>
+            <select id="cityFilter">
+              <option value="">All cities</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="capacityFilter">Min. capacity</label>
+            <select id="capacityFilter">
+              <option value="">Any size</option>
+              <option value="400">400+ guests</option>
+              <option value="600">600+ guests</option>
+              <option value="800">800+ guests</option>
+              <option value="1000">1000+ guests</option>
+            </select>
+          </div>
+          <div class="field full">
+            <label for="perHeadRange">Max per-head catering: <span class="range-value" id="perHeadLabel">Rs 4,500</span></label>
+            <input type="range" id="perHeadRange" min="1800" max="4500" step="100" value="4500">
+          </div>
+        </div>
+
+        <p class="result-count" id="venueCount"></p>
+        <div id="venueList"></div>
+
+        <!-- Venue detail card (hidden until a venue is picked) -->
+        <div class="card" id="venueDetail" hidden>
+          <h3><span id="detailName"></span><span class="badge">Sample</span></h3>
+          <p class="meta" id="detailMeta" style="color:var(--muted); font-size:13.5px;"></p>
+          <p class="price" id="detailPerHead" style="font-weight:700; color:var(--maroon-dark); margin-top:6px;"></p>
+          <div class="winter-note" id="detailWinter"></div>
+          <div class="field" style="margin-top:12px;">
+            <label for="guestCount">Your guest count</label>
+            <input type="number" id="guestCount" min="0" max="5000" value="500">
+          </div>
+          <div class="math-box" id="costMath"></div>
+          <button class="link-btn" id="closeDetail" type="button">← Back to venue list</button>
+        </div>
+      </section>
+
+      <!-- ============ TAB 2: BUDGET ============ -->
+      <section class="tab-panel" id="panel-budget" aria-labelledby="title-budget">
+        <h2 class="panel-title" id="title-budget">Budget planner</h2>
+        <p class="panel-sub">Plan Mehndi, Baraat and Walima separately — then see the combined bill against what your family actually has.</p>
+
+        <div class="event-tabs" role="tablist" aria-label="Wedding events">
+          <button class="event-btn active" id="eventBtn-mehndi" data-event="mehndi" type="button" role="tab">
+            Mehndi<small id="totalMehndi"></small>
+          </button>
+          <button class="event-btn" id="eventBtn-baraat" data-event="baraat" type="button" role="tab">
+            Baraat<small id="totalBaraat"></small>
+          </button>
+          <button class="event-btn" id="eventBtn-walima" data-event="walima" type="button" role="tab">
+            Walima<small id="totalWalima"></small>
+          </button>
+        </div>
+
+        <div class="card">
+          <h3 id="currentEventLabel">Mehndi</h3>
+          <div class="form-grid">
+            <div class="field">
+              <label for="evtGuests">Guests</label>
+              <input type="number" id="evtGuests" min="0" value="300">
+            </div>
+            <div class="field">
+              <label for="evtPerHead">Per-head (Rs)</label>
+              <input type="number" id="evtPerHead" min="0" value="2000">
+            </div>
+            <div class="field">
+              <label for="evtDecor">Decor (Rs)</label>
+              <input type="number" id="evtDecor" min="0" value="150000">
+            </div>
+            <div class="field">
+              <label for="evtOther">Other costs (Rs)</label>
+              <input type="number" id="evtOther" min="0" value="50000">
+            </div>
+          </div>
+          <div class="total-line">
+            <span>Event total</span>
+            <span class="amount" id="evtTotal"></span>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Can we afford it?</h3>
+          <div class="form-grid">
+            <div class="field">
+              <label for="savingsInput">Family savings (Rs)</label>
+              <input type="number" id="savingsInput" min="0" value="3000000">
+            </div>
+            <div class="field">
+              <label for="familyInput">Family contribution (Rs)</label>
+              <input type="number" id="familyInput" min="0" value="1500000">
+            </div>
+          </div>
+          <div class="total-line grand-total">
+            <span>Combined 3-event total</span>
+            <span class="amount" id="combinedTotal"></span>
+          </div>
+          <div class="risk-meter" aria-hidden="true">
+            <div class="risk-fill" id="riskFill"></div>
+          </div>
+          <p class="risk-level" id="riskLevel"></p>
+          <p style="font-size:13px; color:var(--muted);" id="riskRatio"></p>
+          <p class="risk-message" id="riskMessage"></p>
+        </div>
+      </section>
+
+      <!-- ============ TAB 3: GUESTS ============ -->
+      <section class="tab-panel" id="panel-guests" aria-labelledby="title-guests">
+        <h2 class="panel-title" id="title-guests">Guest list</h2>
+        <p class="panel-sub">Track RSVPs for both families. Your list is saved on this device.</p>
+
+        <div class="card">
+          <div class="form-grid">
+            <div class="field">
+              <label for="guestName">Guest name</label>
+              <input type="text" id="guestName" placeholder="e.g. Chacha Rashid" maxlength="60">
+            </div>
+            <div class="field">
+              <label for="guestSide">Family side</label>
+              <select id="guestSide">
+                <option value="groom">Groom's family</option>
+                <option value="bride">Bride's family</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="guestRsvp">RSVP</label>
+              <select id="guestRsvp">
+                <option value="pending">Pending</option>
+                <option value="confirmed">Confirmed</option>
+                <option value="declined">Declined</option>
+              </select>
+            </div>
+            <div class="field" style="align-self:end;">
+              <button class="btn btn-block" id="addGuestBtn" type="button" style="margin-top:0;">Add guest</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="chip-row">
+          <span class="chip">Invited <b id="chipInvited">0</b></span>
+          <span class="chip">Confirmed <b id="chipConfirmed">0</b></span>
+          <span class="chip">Pending <b id="chipPending">0</b></span>
+          <span class="chip">Declined <b id="chipDeclined">0</b></span>
+        </div>
+        <p style="font-size:14.5px; margin-bottom:12px;">
+          Estimated attendance: <strong id="estAttendance" style="color:var(--maroon-dark);">0</strong>
+          <span style="color:var(--muted); font-size:13px;">(confirmed + ~60% of pending)</span>
+        </p>
+
+        <div id="guestList"></div>
+        <div class="empty-note" id="guestEmpty">No guests yet — add your first guest above.</div>
+      </section>
+
+      <!-- ============ TAB 4: VENDORS ============ -->
+      <section class="tab-panel" id="panel-vendors" aria-labelledby="title-vendors">
+        <h2 class="panel-title" id="title-vendors">Vendors</h2>
+        <p class="panel-sub">Book with escrow: your advance is held safely and released only when the work is done.</p>
+
+        <div class="filters">
+          <div class="field full">
+            <label for="categoryFilter">Category</label>
+            <select id="categoryFilter">
+              <option value="">All categories</option>
+            </select>
+          </div>
+        </div>
+        <div id="vendorList"></div>
+
+        <!-- Escrow booking card (hidden until "Book with escrow" is tapped) -->
+        <div class="card" id="escrowCard" hidden>
+          <h3>Book with escrow <span class="badge">Sample</span></h3>
+          <p style="font-size:14px; color:var(--muted); margin-bottom:10px;" id="escrowVendor"></p>
+          <div class="form-grid">
+            <div class="field">
+              <label for="contractValue">Contract value (Rs)</label>
+              <input type="number" id="contractValue" min="0" value="100000">
+            </div>
+            <div class="field">
+              <label for="advancePct">Advance % asked</label>
+              <input type="number" id="advancePct" min="0" max="100" value="30">
+            </div>
+          </div>
+          <button class="btn" id="calcEscrowBtn" type="button">Calculate deposit</button>
+          <div id="escrowResult" hidden style="margin-top:12px;">
+            <div class="math-box">
+              <div>Escrow deposit: <strong id="escrowAmount"></strong></div>
+              <div style="font-size:13px; color:var(--muted); margin-top:4px;">
+                Held securely — released to the vendor only after your event.
+              </div>
+            </div>
+            <div class="warning-box" id="escrowWarning" hidden></div>
+            <button class="btn btn-block" id="confirmDepositBtn" type="button">Confirm deposit</button>
+          </div>
+        </div>
+
+        <h3 style="margin:18px 0 10px; font-size:16px;">My receipts</h3>
+        <div id="receiptList"></div>
+        <div class="empty-note" id="receiptEmpty">No deposits yet. Receipts you confirm will appear here.</div>
+      </section>
+
+      <!-- ============ TAB 5: SCAM-SPOTTER ============ -->
+      <section class="tab-panel" id="panel-scam" aria-labelledby="title-scam">
+        <h2 class="panel-title" id="title-scam">Scam-spotter</h2>
+        <p class="panel-sub">Run a quick red-flag check before paying any vendor a "token" advance.</p>
+
+        <div class="card">
+          <div class="field">
+            <label for="scamSelect">Choose a vendor to check</label>
+            <select id="scamSelect"></select>
+          </div>
+          <button class="btn btn-block" id="runCheckBtn" type="button">Run red-flag check</button>
+
+          <div id="scamResult" hidden style="margin-top:14px;">
+            <p style="font-size:14px; color:var(--muted);">Checking: <strong id="scamVendorName" style="color:var(--ink);"></strong></p>
+            <div class="score-wrap">
+              <div class="score-num" id="scamScoreNum">100</div>
+              <div class="score-label">trust score (100 = clean, lower = riskier)</div>
+              <div class="score-bar"><div class="score-bar-fill" id="scamScoreFill" style="width:100%;"></div></div>
+            </div>
+            <ul class="flag-list" id="scamFlags"></ul>
+          </div>
+
+          <div class="honesty-note">
+            This checklist is a design demonstration, not real verification.
+            Always meet vendors in person, get a written agreement, and never
+            pay a large advance to a stranger.
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- ============ BOTTOM TAB BAR ============ -->
+    <nav class="tab-bar" id="tabNav" aria-label="Main navigation">
+      <button class="tab-btn active" data-tab="venues" type="button" aria-label="Venues">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/>
+        </svg>
+        Venues
+      </button>
+      <button class="tab-btn" data-tab="budget" type="button" aria-label="Budget">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <rect x="3" y="6" width="18" height="14" rx="2"/><path d="M3 10h18M7 15h4"/>
+        </svg>
+        Budget
+      </button>
+      <button class="tab-btn" data-tab="guests" type="button" aria-label="Guests">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.5 3-5.5 6.5-5.5s6.5 2 6.5 5.5"/><circle cx="17" cy="9" r="2.5"/><path d="M16 14.7c2.8.3 5 2.1 5 4.8"/>
+        </svg>
+        Guests
+      </button>
+      <button class="tab-btn" data-tab="vendors" type="button" aria-label="Vendors">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M4 7l8-4 8 4v10l-8 4-8-4z"/><path d="M4 7l8 4 8-4M12 11v10"/>
+        </svg>
+        Vendors
+      </button>
+      <button class="tab-btn" data-tab="scam" type="button" aria-label="Scam-spotter">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M12 3l8 3v6c0 4.5-3.5 7.5-8 9-4.5-1.5-8-4.5-8-9V6z"/><path d="M12 9v4M12 16.5v.5"/>
+        </svg>
+        Scam-spotter
+      </button>
+    </nav>
+
+    <!-- ============ FOOTER ============ -->
+    <footer class="app-footer">
+      <p><strong>Shaadi</strong> is a UX design concept. All venues, vendors, and
+      prices are sample data for design demonstration — none are real businesses,
+      and nothing here is verified or bookable. No real helpline numbers are listed.</p>
+    </footer>
+
+  </div><!-- /.app -->
+
+  <script src="data.js"></script>
+  <script src="logic.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
